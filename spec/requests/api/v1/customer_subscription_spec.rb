@@ -4,7 +4,6 @@ RSpec.describe "Customer Subsciption API" do
   describe 'post /api/v1/customer_subscriptions' do
     it 'creates a customer_subscription record given a customer and a subscription' do
       customer = create(:customer)
-      require 'pry'; binding.pry
       subscription = create(:subscription)
       expect(customer.subscriptions).to eq([])
 

@@ -9,8 +9,8 @@ RSpec.describe "Customer Subsciption API" do
 
       headers = {'CONTENT_TYPE' => 'application/json'}
       params = ({
-        customer: customer,
-        subscription: subscription
+        customer_id: customer.id,
+        subscription_id: subscription.id
       })
 
       post "/api/v1/customer_subscriptions", headers: headers, params: JSON.generate(params)

@@ -13,7 +13,7 @@ RSpec.describe "Customer Subsciption API" do
         subscription: subscription
       })
 
-      post "api/v1/customer_subscriptions", headers: headers, params: JSON.generate(params)
+      post "/api/v1/customer_subscriptions", headers: headers, params: JSON.generate(params)
       
       expect(customer.subscriptions).to eq([subscription])
       expect(subscription.customers).to eq([customer])

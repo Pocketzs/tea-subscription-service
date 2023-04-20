@@ -105,4 +105,68 @@ RSpec.describe "Customer Subsciption API" do
       expect(error[:errors][0][:detail]).to eq("Validation failed: Customer A customer may be subscribed to a subscription only once")
     end
   end
+
+  describe 'PATCH /api/v1/customer_subscriptions' do
+    it 'can change a customer subscription status from active to canceled' do
+      customer = create(:customer)
+      subscription = create(:subscription)
+      customer.subscriptions << subscription
+      customer = Customer.last
+      subscription = Subscription.last
+      cs = CustomerSubscription.last
+
+      expect(cs.status).to eq("active")
+
+      headers = {"CONTENT_TYPE" => "application/json"}
+      params = {
+        status: "canceled"
+      }
+      patch "/api/v1/customer_subscriptions/#{cs.id}", headers: headers, params: JSON.generate(params)
+
+      cs = CustomerSubscription.last
+      expect(cs.customer_id).to eq(customer.id)
+      expect(cs.subscription_id).to eq(subscription.id)
+      expect(cs.status).to eq("canceled")
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(json[:data][:attributes][:status]).to eq("canceled")
+    end
+
+    it 'returns an error for invalid customer_subscription id' do
+      headers = {"CONTENT_TYPE" => "application/json"}
+      params = {
+        status: "canceled"
+      }
+      patch "/api/v1/customer_subscriptions/12", headers: headers, params: JSON.generate(params)
+      error = JSON.parse(response.body, symbolize_names: true)
+      expect(response).to have_http_status(:not_found)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+      expect(error).to have_key(:message)
+      expect(error).to have_key(:errors)
+      expect(error[:errors][0][:detail]).to eq("Couldn't find CustomerSubscription with 'id'=12")
+    end
+
+    it 'returns an error for invalid status type' do
+      customer = create(:customer)
+      subscription = create(:subscription)
+      customer.subscriptions << subscription
+      cs = CustomerSubscription.last
+
+      headers = {"CONTENT_TYPE" => "application/json"}
+      params = {
+        status: "foo"
+      }
+
+      patch "/api/v1/customer_subscriptions/#{cs.id}", headers: headers, params: JSON.generate(params)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+      expect(response).to have_http_status(:bad_request)
+      error = JSON.parse(response.body, symbolize_names: true)
+      expect(error).to have_key(:message)
+      expect(error).to have_key(:errors)
+      expect(error[:errors][0][:detail]).to eq("'foo' is not a valid status")
+    end
+  end
 end

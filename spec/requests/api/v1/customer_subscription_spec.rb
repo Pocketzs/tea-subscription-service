@@ -36,5 +36,52 @@ RSpec.describe "Customer Subsciption API" do
       expect(json[:data][:attributes][:customer_id]).to eq(customer.id)
       expect(json[:data][:attributes][:subscription_id]).to eq(subscription.id)
     end
+
+    it 'returns an error response if customer or subscription does not exist' do
+      headers = {'CONTENT_TYPE' => 'application/json'}
+      params = ({
+        customer_id: 123,
+        subscription_id: 123
+      })
+
+      post "/api/v1/customer_subscriptions", headers: headers, params: JSON.generate(params)
+
+      expect(response).to have_http_status(:bad_request)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+      expect(error).to have_key(:message)
+      expect(error).to have_key(:errors)
+      expect(error[:errors][0][:detail]).to eq("Validation failed: Subscription must exist, Customer must exist")
+    end
+
+    it 'returns an error response if customer or subscription id are invalid' do
+      headers = {'CONTENT_TYPE' => 'application/json'}
+      params = ({
+        customer_id: "asdfassdf",
+        subscription_id: "asdfasd"
+      })
+
+      post "/api/v1/customer_subscriptions", headers: headers, params: JSON.generate(params)
+
+      expect(response).to have_http_status(:bad_request)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+      expect(error).to have_key(:message)
+      expect(error).to have_key(:errors)
+      expect(error[:errors][0][:detail]).to eq("Validation failed: Subscription must exist, Customer must exist")
+    end
+
+    it 'returns an error response if customer or subscription id are not given' do
+      headers = {'CONTENT_TYPE' => 'application/json'}
+      
+      post "/api/v1/customer_subscriptions", headers: headers
+
+      expect(response).to have_http_status(:bad_request)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+      expect(error).to have_key(:message)
+      expect(error).to have_key(:errors)
+      expect(error[:errors][0][:detail]).to eq("param is missing or the value is empty: customer_subscription")
+    end
   end
 end

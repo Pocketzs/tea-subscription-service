@@ -2,6 +2,7 @@ class ApplicationController < ActionController::API
   rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity_response
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found_response
   rescue_from ActionController::ParameterMissing, with: :render_parameter_missing_response 
+  rescue_from ArgumentError, with: :render_invalid_status_response
 
   def render_unprocessable_entity_response(exception)
     # serialize error takes the arguments (exception, status, message) in that order
@@ -15,5 +16,9 @@ class ApplicationController < ActionController::API
 
   def render_parameter_missing_response(exception)
     render json: ErrorSerializer.serialize_error(exception, :bad_request, "Parameter Required"), status: :bad_request
+  end
+
+  def render_invalid_status_response(exception)
+    render json: ErrorSerializer.serialize_error(exception, :bad_request, "Invalid Status"), status: :bad_request
   end
 end

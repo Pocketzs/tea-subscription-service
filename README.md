@@ -85,7 +85,7 @@ REQUIRED Body Example (NOTE: ids MUST be valid and existing records)
         "attributes": {
             "customer_id": 2,
             "subscription_id": 1,
-            "status: "active"
+            "status": "active"
         }
     }
 }

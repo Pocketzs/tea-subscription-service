@@ -31,7 +31,7 @@ To get started with this project, follow these steps:
 
 1. Clone the repository to your local machine:
    ```
-   git clone https://github.com/your-username/tea-subscription-service.git
+   git clone https://github.com/Pocketzs/tea-subscription-service.git
    ```
 
 2. Install the necessary gems:

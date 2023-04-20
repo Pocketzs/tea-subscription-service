@@ -83,5 +83,26 @@ RSpec.describe "Customer Subsciption API" do
       expect(error).to have_key(:errors)
       expect(error[:errors][0][:detail]).to eq("param is missing or the value is empty: customer_subscription")
     end
+
+    it 'returns an error if a customer is already subscribed' do
+      customer = create(:customer)
+      subscription = create(:subscription)
+
+      headers = {'CONTENT_TYPE' => 'application/json'}
+      params = ({
+        customer_id: customer.id,
+        subscription_id: subscription.id
+      })
+
+      post "/api/v1/customer_subscriptions", headers: headers, params: JSON.generate(params)
+      post "/api/v1/customer_subscriptions", headers: headers, params: JSON.generate(params)
+
+      expect(response).to have_http_status(:bad_request)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+      expect(error).to have_key(:message)
+      expect(error).to have_key(:errors)
+      expect(error[:errors][0][:detail]).to eq("Validation failed: Customer A customer may be subscribed to a subscription only once")
+    end
   end
 end

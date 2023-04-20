@@ -58,23 +58,63 @@ To get started with this project, follow these steps:
 | Endpoint | HTTP Method | Description | 
 | -------- | ----------- | ----------- |
 | `/api/v1/customer_subscriptions` | POST | Sign up a customer for a subscription.  Default subscription status will be `active`.  A REQUIRED body must be passed in this request containing the keys `:customer_id` and `subscription_id` with valid ids respectively. |
-| `/api/v1/customer_subscriptions` | PATCH | Update the subscription status with either `:active` or `:canceled`.  A REQUIRED body must be passed in this request containing the keys `:customer_id`, `subscription_id`, and `:status` with valid ids respectively and either `:active` or `:canceled` for status. |
-| `/api/v1/customer/#{id}/subscriptions` | GET | Get all of a customer's subscriptions both active and canceled.  replace `#{id}` with a valid customer id.
+| `/api/v1/customer_subscriptions/:id` | PATCH | Update the subscription `:status` of an existing `CustomerSubscription` with either `:active` or `:canceled`.  A REQUIRED body must be passed in this request containing the keys `:customer_id`, `subscription_id`, and `:status` with valid ids respectively and either `:active` or `:canceled` for status. |
+| `/api/v1/customers/:customer_id/subscriptions` | GET | Get all of a customer's subscriptions both active and canceled.  Replace `:customer_id` with a valid customer id.
 
 
 # Example Responses
 
-`POST /api/v1/customer_subscriptions`
+## `POST /api/v1/customer_subscriptions`
 
 REQUIRED Body Example (NOTE: ids MUST be valid and existing records)
 ```JSON
 {
-  "customer_id": 12,
-  "subscription_id": 2
+  "customer_id": 2,
+  "subscription_id": 1
 }
 ```
 
 <details>
   <summary>Response Snippet</summary>
-  
+
+  ```JSON
+  {
+    "data": {
+        "id": "2",
+        "type": "customer_subscription",
+        "attributes": {
+            "customer_id": 2,
+            "subscription_id": 1,
+            "status: "active"
+        }
+    }
+}
+```
+</details>
+
+## `PATCH /api/v1/customer_subscriptions/1`
+
+REQUIRED Body Example (NOTE: The only valid statuses are "canceled", "active" or 0 or 1 respectively)
+```JSON
+{
+  "status": "canceled"
+}
+```
+
+<details>
+  <summary>Response Snippet</summary>
+
+  ```JSON
+  {
+    "data": {
+        "id": "1",
+        "type": "customer_subscription",
+        "attributes": {
+            "customer_id": 2,
+            "subscription_id": 1,
+            "status": "canceled"
+        }
+    }
+}
+```
 </details>

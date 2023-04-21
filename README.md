@@ -118,3 +118,25 @@ REQUIRED Body Example (NOTE: The only valid statuses are "canceled", "active" or
 }
 ```
 </details>
+
+## `GET /api/v1/customers/1/subscriptions`
+
+<details>
+  <summary>Response Snippet</summary>
+
+  ```JSON
+ {
+    "data": [
+        {
+            "id": "1",
+            "type": "subscription",
+            "attributes": {
+                "title": "Uneasiness",
+                "price": 8147,
+                "frequency": "monthly"
+            }
+        }
+    ]
+}
+```
+</details>
